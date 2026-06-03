@@ -194,9 +194,34 @@ export default function App() {
 }
 
 function ProfileModal({ user, onClose, onLogout }: { user: any, onClose: () => void, onLogout: () => void }) {
-  const planName = user.tenant?.plan === 'advanced' ? 'Plano Avançado' : 'Plano Básico';
-  const planColor = user.tenant?.plan === 'advanced' ? 'from-indigo-500 to-purple-600' : 'from-cyan-500 to-blue-600';
+  const tenantPlan = user.tenant?.plan;
+  const tenantVariant = user.tenant?.variantId;
   
+  let planName = 'Plano Básico';
+  let planColor = 'from-cyan-500 to-blue-600';
+  let crownColor = 'text-cyan-400';
+
+  if (tenantVariant === 'pro') {
+    planName = 'Plano Pro';
+    planColor = 'from-amber-500 to-orange-600';
+    crownColor = 'text-amber-400';
+  } else if (tenantPlan === 'advanced' || tenantVariant === 'advanced') {
+    planName = 'Plano Avançado';
+    planColor = 'from-indigo-500 to-purple-600';
+    crownColor = 'text-indigo-400';
+  } else if (tenantPlan === 'trial') {
+    planName = 'Período de Teste';
+    planColor = 'from-slate-500 to-slate-700';
+    crownColor = 'text-slate-400';
+  }
+  
+  const isTrial = tenantPlan === 'trial';
+  const isCourtesy = !isTrial && !user.tenant?.externalSubscriptionId && !user.tenant?.externalCustomerId;
+  
+  const expirationDate = isTrial 
+    ? user.tenant?.trialEndsAt 
+    : user.tenant?.currentPeriodEnd;
+
   const formatDate = (dateStr: string) => {
     if (!dateStr) return 'N/A';
     const date = new Date(dateStr);
@@ -260,19 +285,31 @@ function ProfileModal({ user, onClose, onLogout }: { user: any, onClose: () => v
                   </div>
                 </div>
                 <div className="bg-white/5 p-2 rounded-xl border border-white/10">
-                  <Crown size={20} className={user.tenant?.plan === 'advanced' ? 'text-indigo-400' : 'text-cyan-400'} />
+                  <Crown size={20} className={crownColor} />
                 </div>
               </div>
 
               <div className="space-y-3 relative z-10">
                 <div className="flex items-center gap-3 text-sm">
                   <Calendar size={16} className="text-slate-500" />
-                  <span className="text-slate-300">Expira em: <strong className="text-white font-semibold">{formatDate(user.tenant?.currentPeriodEnd)}</strong></span>
+                  <span className="text-slate-300">Expira em: <strong className="text-white font-semibold">{formatDate(expirationDate)}</strong></span>
                 </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <CheckCircle2 size={16} className="text-emerald-500" />
-                  <span className="text-slate-300">Renovação automática ativa</span>
-                </div>
+                {isTrial ? (
+                  <div className="flex items-center gap-3 text-sm">
+                    <CheckCircle2 size={16} className="text-slate-400" />
+                    <span className="text-slate-300">Período de testes ativo</span>
+                  </div>
+                ) : isCourtesy ? (
+                  <div className="flex items-center gap-3 text-sm">
+                    <CheckCircle2 size={16} className="text-amber-400" />
+                    <span className="text-slate-300">Plano de cortesia ativo</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3 text-sm">
+                    <CheckCircle2 size={16} className="text-emerald-500" />
+                    <span className="text-slate-300">Renovação automática ativa</span>
+                  </div>
+                )}
               </div>
             </div>
 
