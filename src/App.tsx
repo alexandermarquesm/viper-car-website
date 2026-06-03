@@ -19,23 +19,23 @@ export default function App() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('vipcar_user');
+    const savedUser = localStorage.getItem('vipercar_user');
     if (savedUser) {
       try {
         setUser(JSON.parse(savedUser));
       } catch (e) {
-        localStorage.removeItem('vipcar_user');
+        localStorage.removeItem('vipercar_user');
       }
     }
   }, []);
 
   const logout = () => {
-    localStorage.removeItem('vipcar_token');
-    localStorage.removeItem('vipcar_user');
+    localStorage.removeItem('vipercar_token');
+    localStorage.removeItem('vipercar_user');
     setUser(null);
   };
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'https://vip-car-api.vercel.app';
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://viper-car-api.vercel.app';
 
   const handleSubscribe = async (plan: 'basic' | 'pro') => {
     if (!user) {
@@ -44,7 +44,7 @@ export default function App() {
     }
 
     try {
-      const token = localStorage.getItem('vipcar_token');
+      const token = localStorage.getItem('vipercar_token');
       const response = await fetch(`${apiUrl}/subscriptions/checkout`, {
         method: 'POST',
         headers: {
@@ -75,7 +75,7 @@ export default function App() {
     if (!user) return;
 
     try {
-      const token = localStorage.getItem('vipcar_token');
+      const token = localStorage.getItem('vipercar_token');
       const response = await fetch(`${apiUrl}/subscriptions/portal`, {
         method: 'POST',
         headers: {
@@ -113,7 +113,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
-              <img src="/full_logo.png" alt="VIP Car Logo" className="h-8 sm:h-9 w-auto object-contain" />
+              <img src="/full_logo.png" alt="Viper Car Logo" className="h-8 sm:h-9 w-auto object-contain" />
             </div>
             
             <div className="hidden md:flex items-center gap-8">
@@ -188,7 +188,7 @@ export default function App() {
                       </div>
                       <div className="flex flex-col text-left">
                         <span className="text-sm font-bold text-white">{user.name}</span>
-                        <span className="text-[10px] text-slate-400 uppercase tracking-widest">{user.tenant?.name || 'Vip Car'}</span>
+                        <span className="text-[10px] text-slate-400 uppercase tracking-widest">{user.tenant?.name || 'Viper Car'}</span>
                       </div>
                     </button>
                     <button 
@@ -473,7 +473,7 @@ function ProfileModal({
                 )}
 
                 <a 
-                  href="https://vip-car-app.vercel.app" 
+                  href="https://viper-car-app.vercel.app" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-full bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all border border-white/10 group cursor-pointer"
@@ -513,7 +513,7 @@ function LoginModal({ onClose, onLoginSuccess }: { onClose: () => void, onLoginS
     setError(null);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://vip-car-api.vercel.app';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://viper-car-api.vercel.app';
       const response = await fetch(`${apiUrl}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -526,8 +526,8 @@ function LoginModal({ onClose, onLoginSuccess }: { onClose: () => void, onLoginS
         throw new Error(data.message || 'Credenciais inválidas');
       }
 
-      localStorage.setItem('vipcar_token', data.token);
-      localStorage.setItem('vipcar_user', JSON.stringify(data.user));
+      localStorage.setItem('vipercar_token', data.token);
+      localStorage.setItem('vipercar_user', JSON.stringify(data.user));
       onLoginSuccess(data.user);
     } catch (err: any) {
       setError(err.message || "Erro de conexão com o servidor");
@@ -574,7 +574,7 @@ function LoginModal({ onClose, onLoginSuccess }: { onClose: () => void, onLoginS
 
           <div className="mb-10 text-center">
             <div className="inline-flex w-32 h-32 rounded-full bg-slate-950/20 items-center justify-center shadow-2xl shadow-cyan-500/5 mb-6 border border-white/5 overflow-hidden">
-              <img src="/logo.png" alt="VIP Car Emblem" className="w-full h-full object-contain p-2" />
+              <img src="/logo.png" alt="Viper Car Emblem" className="w-full h-full object-contain p-2" />
             </div>
             <h2 className="text-3xl font-display font-bold text-white mb-2 tracking-tight">Bem-vindo de volta</h2>
             <p className="text-slate-400 text-sm">Acesse sua conta para gerenciar seu pátio</p>
@@ -1538,7 +1538,7 @@ function BenefitsSection() {
         
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 className="text-3xl sm:text-4xl font-display font-bold text-white mb-6 tracking-tight">
-            Por que usar a VIP Car?
+            Por que usar a Viper Car?
           </h2>
           <p className="text-slate-400 text-lg">
             Esqueça a papelada e os cadernos amassados. Transformamos a gestão da sua estética automotiva em uma experiência digital, rápida e profissional.
@@ -1868,7 +1868,7 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 mb-16">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-6">
-              <img src="/full_logo.png" alt="VIP Car Logo" className="h-10 w-auto object-contain" />
+              <img src="/full_logo.png" alt="Viper Car Logo" className="h-10 w-auto object-contain" />
             </div>
             <p className="text-slate-400 text-sm max-w-sm mb-8 leading-relaxed">
               Sistema completo para gestão de lava rápidos e estéticas automotivas. Diga adeus ao papel e tenha controle total do seu negócio na palma da mão.
@@ -1922,7 +1922,7 @@ function Footer() {
         </div>
 
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-medium">
-          <p className="text-slate-500">&copy; {new Date().getFullYear()} VIP Car Tecnologia. Todos os direitos reservados.</p>
+          <p className="text-slate-500">&copy; {new Date().getFullYear()} Viper Car Tecnologia. Todos os direitos reservados.</p>
           <div className="flex items-center gap-6 text-slate-500">
             <a href="#" className="hover:text-slate-300 transition-colors">Termos de Uso</a>
             <a href="#" className="hover:text-slate-300 transition-colors">Política de Privacidade</a>
