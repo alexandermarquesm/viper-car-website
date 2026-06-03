@@ -9,7 +9,7 @@ import {
   Car, Calendar, BarChart3, Bell, CheckCircle2, ChevronRight, 
   Smartphone, Droplets, Wallet, Users, ArrowRight, Menu, X, Clock, Settings,
   Camera, Database, Crown, TrendingUp, Mail, Briefcase, ArrowLeft, LogOut,
-  User, MessageCircle, Check, ArrowUpRight, Instagram, Linkedin, Facebook, Twitter, Lock, ExternalLink
+  User, MessageCircle, Check, ArrowUpRight, Instagram, Linkedin, Facebook, Twitter, Lock, ExternalLink, Zap
 } from 'lucide-react';
 
 export default function App() {
@@ -33,6 +33,72 @@ export default function App() {
     localStorage.removeItem('vipcar_token');
     localStorage.removeItem('vipcar_user');
     setUser(null);
+  };
+
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://vip-car-api.vercel.app';
+
+  const handleSubscribe = async (plan: 'basic' | 'pro') => {
+    if (!user) {
+      setIsLoginOpen(true);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('vipcar_token');
+      const response = await fetch(`${apiUrl}/subscriptions/checkout`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plan }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Falha ao iniciar checkout.');
+      }
+
+      if (data.url) {
+        if (data.url.startsWith('https://checkout.stripe.com/')) {
+          window.open(data.url, '_blank');
+        } else {
+          throw new Error('URL de pagamento inválida ou não segura.');
+        }
+      }
+    } catch (err: any) {
+      alert(err.message || 'Erro ao conectar com o gateway de pagamento.');
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    if (!user) return;
+
+    try {
+      const token = localStorage.getItem('vipcar_token');
+      const response = await fetch(`${apiUrl}/subscriptions/portal`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Falha ao carregar portal de gerenciamento.');
+      }
+
+      if (data.url) {
+        if (data.url.startsWith('https://billing.stripe.com/')) {
+          window.open(data.url, '_blank');
+        } else {
+          throw new Error('URL do portal de cobrança inválida ou não segura.');
+        }
+      }
+    } catch (err: any) {
+      alert(err.message || 'Erro ao conectar com o portal de gerenciamento.');
+    }
   };
 
   return (
@@ -162,7 +228,7 @@ export default function App() {
         <FeaturesSection />
         <InteractiveSection />
         <BenefitsSection />
-        <PricingSection />
+        <PricingSection user={user} onSubscribe={handleSubscribe} onManageSubscription={handleManageSubscription} />
         <BottomCTA />
       </main>
 
@@ -186,6 +252,8 @@ export default function App() {
               logout();
               setIsProfileOpen(false);
             }} 
+            onManageSubscription={handleManageSubscription}
+            onSubscribe={handleSubscribe}
           />
         )}
       </AnimatePresence>
@@ -193,7 +261,20 @@ export default function App() {
   );
 }
 
-function ProfileModal({ user, onClose, onLogout }: { user: any, onClose: () => void, onLogout: () => void }) {
+function ProfileModal({ 
+  user, 
+  onClose, 
+  onLogout,
+  onManageSubscription,
+  onSubscribe
+}: { 
+  user: any; 
+  onClose: () => void; 
+  onLogout: () => void;
+  onManageSubscription: () => void;
+  onSubscribe: (plan: 'basic' | 'pro') => void;
+}) {
+  const [showPlans, setShowPlans] = useState(false);
   const tenantPlan = user.tenant?.plan;
   const tenantVariant = user.tenant?.variantId;
   
@@ -201,14 +282,10 @@ function ProfileModal({ user, onClose, onLogout }: { user: any, onClose: () => v
   let planColor = 'from-cyan-500 to-blue-600';
   let crownColor = 'text-cyan-400';
 
-  if (tenantVariant === 'pro') {
+  if (tenantVariant === 'pro' || tenantPlan === 'advanced' || tenantVariant === 'advanced') {
     planName = 'Plano Pro';
     planColor = 'from-amber-500 to-orange-600';
     crownColor = 'text-amber-400';
-  } else if (tenantPlan === 'advanced' || tenantVariant === 'advanced') {
-    planName = 'Plano Avançado';
-    planColor = 'from-indigo-500 to-purple-600';
-    crownColor = 'text-indigo-400';
   } else if (tenantPlan === 'trial') {
     planName = 'Período de Teste';
     planColor = 'from-slate-500 to-slate-700';
@@ -258,77 +335,161 @@ function ProfileModal({ user, onClose, onLogout }: { user: any, onClose: () => v
         <div className="relative z-10 p-8 sm:p-10">
           <button 
             onClick={onClose}
-            className="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+            className="absolute top-6 right-6 p-2 rounded-full bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
           >
             <X size={20} />
           </button>
 
-          <div className="mb-8 text-center">
-            <div className={`inline-flex w-20 h-20 bg-gradient-to-br ${planColor} rounded-3xl items-center justify-center shadow-xl text-white mb-6 transform -rotate-3`}>
-              <User size={40} strokeWidth={2} />
-            </div>
-            <h2 className="text-2xl font-display font-bold text-white mb-1 tracking-tight">{user.name}</h2>
-            <p className="text-slate-400 text-sm">{user.email}</p>
-          </div>
-
-          <div className="space-y-4 mb-10">
-            {/* Plan Info Card */}
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 relative overflow-hidden group">
-              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${planColor} opacity-5 blur-[40px] pointer-events-none`} />
-              
-              <div className="flex justify-between items-start mb-4 relative z-10">
-                <div>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Status da Assinatura</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-white tracking-tight">{planName}</span>
-                    <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Ativo</span>
-                  </div>
-                </div>
-                <div className="bg-white/5 p-2 rounded-xl border border-white/10">
-                  <Crown size={20} className={crownColor} />
-                </div>
+          {showPlans ? (
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <button 
+                  onClick={() => setShowPlans(false)}
+                  className="p-1.5 rounded-xl bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer border border-white/5"
+                >
+                  <ArrowLeft size={16} />
+                </button>
+                <h2 className="text-xl font-display font-bold text-white tracking-tight">Escolha seu plano</h2>
               </div>
 
-              <div className="space-y-3 relative z-10">
-                <div className="flex items-center gap-3 text-sm">
-                  <Calendar size={16} className="text-slate-500" />
-                  <span className="text-slate-300">Expira em: <strong className="text-white font-semibold">{formatDate(expirationDate)}</strong></span>
+              <div className="space-y-4 mb-6">
+                {/* Basic Option */}
+                <button 
+                  onClick={() => onSubscribe('basic')}
+                  className="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-3xl p-5 text-left flex items-center justify-between transition-all group cursor-pointer"
+                >
+                  <div>
+                    <h4 className="font-bold text-white mb-1">Plano Básico</h4>
+                    <p className="text-slate-400 text-xs">1 usuário e veículos ilimitados</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-black text-cyan-400 block">R$ 49,90</span>
+                    <span className="text-[10px] text-slate-500">/mês</span>
+                  </div>
+                </button>
+
+                {/* Pro Option */}
+                <button 
+                  onClick={() => onSubscribe('pro')}
+                  className="w-full bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 rounded-3xl p-5 text-left flex items-center justify-between transition-all group cursor-pointer relative"
+                >
+                  <div className="absolute top-0 right-12 -translate-y-1/2 bg-indigo-500 text-white px-2 py-0.5 rounded-full text-[8px] font-extrabold uppercase tracking-wider">
+                    Mais Escolhido
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white mb-1 flex items-center gap-1.5">
+                      Plano Pro <Zap size={12} className="text-amber-400 fill-amber-400" />
+                    </h4>
+                    <p className="text-slate-400 text-xs">Até 5 usuários e relatórios financeiros</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-black text-indigo-400 block">R$ 89,90</span>
+                    <span className="text-[10px] text-slate-500">/mês</span>
+                  </div>
+                </button>
+              </div>
+
+              <button 
+                onClick={() => {
+                  onClose();
+                  setTimeout(() => {
+                    const el = document.getElementById('pricing');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }, 150);
+                }}
+                className="w-full py-4 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white rounded-2xl font-bold text-xs transition-all border border-white/10 text-center cursor-pointer flex items-center justify-center gap-2 group"
+              >
+                Visualizar informações dos planos <ExternalLink size={14} className="text-slate-500 group-hover:text-cyan-400 transition-colors" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="mb-8 text-center">
+                <div className={`inline-flex w-20 h-20 bg-gradient-to-br ${planColor} rounded-3xl items-center justify-center shadow-xl text-white mb-6 transform -rotate-3`}>
+                  <User size={40} strokeWidth={2} />
                 </div>
-                {isTrial ? (
-                  <div className="flex items-center gap-3 text-sm">
-                    <CheckCircle2 size={16} className="text-slate-400" />
-                    <span className="text-slate-300">Período de testes ativo</span>
+                <h2 className="text-2xl font-display font-bold text-white mb-1 tracking-tight">{user.name}</h2>
+                <p className="text-slate-400 text-sm">{user.email}</p>
+              </div>
+
+              <div className="space-y-4 mb-10">
+                {/* Plan Info Card */}
+                <div className="bg-white/5 border border-white/10 rounded-3xl p-6 relative overflow-hidden group">
+                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${planColor} opacity-5 blur-[40px] pointer-events-none`} />
+                  
+                  <div className="flex justify-between items-start mb-4 relative z-10">
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Status da Assinatura</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-white tracking-tight">{planName}</span>
+                        <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Ativo</span>
+                      </div>
+                    </div>
+                    <div className="bg-white/5 p-2 rounded-xl border border-white/10">
+                      <Crown size={20} className={crownColor} />
+                    </div>
                   </div>
-                ) : isCourtesy ? (
-                  <div className="flex items-center gap-3 text-sm">
-                    <CheckCircle2 size={16} className="text-amber-400" />
-                    <span className="text-slate-300">Plano de cortesia ativo</span>
+
+                  <div className="space-y-3 relative z-10">
+                    <div className="flex items-center gap-3 text-sm">
+                      <Calendar size={16} className="text-slate-500" />
+                      <span className="text-slate-300">Expira em: <strong className="text-white font-semibold">{formatDate(expirationDate)}</strong></span>
+                    </div>
+                    {isTrial ? (
+                      <div className="flex items-center gap-3 text-sm">
+                        <CheckCircle2 size={16} className="text-slate-400" />
+                        <span className="text-slate-300">Período de testes ativo</span>
+                      </div>
+                    ) : isCourtesy ? (
+                      <div className="flex items-center gap-3 text-sm">
+                        <CheckCircle2 size={16} className="text-amber-400" />
+                        <span className="text-slate-300">Plano de cortesia ativo</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3 text-sm">
+                        <CheckCircle2 size={16} className="text-emerald-500" />
+                        <span className="text-slate-300">Renovação automática activa</span>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="flex items-center gap-3 text-sm">
-                    <CheckCircle2 size={16} className="text-emerald-500" />
-                    <span className="text-slate-300">Renovação automática ativa</span>
-                  </div>
+                </div>
+
+                {tenantPlan === 'monthly' && (
+                  <button 
+                    onClick={onManageSubscription}
+                    className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all shadow-lg shadow-indigo-600/30 group cursor-pointer"
+                  >
+                    Gerenciar Plano / Upgrade <ExternalLink size={18} className="text-indigo-200 group-hover:text-white transition-colors" />
+                  </button>
                 )}
+                
+                {tenantPlan === 'trial' && (
+                  <button 
+                    onClick={() => setShowPlans(true)}
+                    className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all shadow-lg shadow-cyan-500/30 group cursor-pointer"
+                  >
+                    Assinar Plano VIP <ExternalLink size={18} className="text-cyan-100 group-hover:text-white transition-colors" />
+                  </button>
+                )}
+
+                <a 
+                  href="https://vip-car-app.vercel.app" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-full bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all border border-white/10 group cursor-pointer"
+                >
+                  Acessar App / Dashboard <ExternalLink size={18} className="text-slate-400 group-hover:text-cyan-400 transition-colors" />
+                </a>
               </div>
-            </div>
 
-            <a 
-              href="https://vip-car-app.vercel.app" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="w-full bg-white/5 hover:bg-white/10 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all border border-white/10 group"
-            >
-              Acessar App / Dashboard <ExternalLink size={18} className="text-slate-400 group-hover:text-cyan-400 transition-colors" />
-            </a>
-          </div>
-
-          <button 
-            onClick={onLogout}
-            className="w-full py-4 text-slate-500 hover:text-red-400 font-bold transition-colors flex items-center justify-center gap-2"
-          >
-            <LogOut size={18} /> Sair da conta
-          </button>
+              <button 
+                onClick={onLogout}
+                className="w-full py-4 text-slate-500 hover:text-red-400 font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <LogOut size={18} /> Sair da conta
+              </button>
+            </>
+          )}
         </div>
       </motion.div>
     </motion.div>
@@ -1466,7 +1627,105 @@ function BenefitsSection() {
 }
 
 {/* --- PRICING SECTION --- */}
-function PricingSection() {
+function PricingSection({ 
+  user, 
+  onSubscribe, 
+  onManageSubscription 
+}: { 
+  user: any; 
+  onSubscribe: (plan: 'basic' | 'pro') => void; 
+  onManageSubscription: () => void;
+}) {
+  const tenantPlan = user?.tenant?.plan;
+  const tenantVariant = user?.tenant?.variantId;
+  const hasActiveSub = tenantPlan === 'monthly' && user?.tenant?.subscriptionStatus === 'active';
+
+  const renderBasicButton = () => {
+    if (!user) {
+      return (
+        <button 
+          onClick={() => onSubscribe('basic')}
+          className="w-full bg-white/5 hover:bg-white/10 text-white border border-white/10 px-6 py-4 rounded-2xl font-bold transition-all mt-auto tracking-wide cursor-pointer"
+        >
+          Assinar Básico
+        </button>
+      );
+    }
+    
+    if (hasActiveSub) {
+      if (tenantVariant === 'basic' || !tenantVariant) {
+        return (
+          <button 
+            disabled
+            className="w-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-6 py-4 rounded-2xl font-bold mt-auto tracking-wide cursor-not-allowed"
+          >
+            Seu Plano Atual
+          </button>
+        );
+      }
+      return (
+        <button 
+          onClick={onManageSubscription}
+          className="w-full bg-white/5 hover:bg-white/10 text-white border border-white/10 px-6 py-4 rounded-2xl font-bold transition-all mt-auto tracking-wide cursor-pointer"
+        >
+          Gerenciar Plano
+        </button>
+      );
+    }
+
+    return (
+      <button 
+        onClick={() => onSubscribe('basic')}
+        className="w-full bg-white/5 hover:bg-white/10 text-white border border-white/10 px-6 py-4 rounded-2xl font-bold transition-all mt-auto tracking-wide cursor-pointer"
+      >
+        Assinar Básico
+      </button>
+    );
+  };
+
+  const renderProButton = () => {
+    if (!user) {
+      return (
+        <button 
+          onClick={() => onSubscribe('pro')}
+          className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white px-6 py-4 rounded-2xl font-bold transition-all mt-auto tracking-wide border border-indigo-500 shadow-lg shadow-indigo-500/20 cursor-pointer"
+        >
+          Assinar Pro
+        </button>
+      );
+    }
+
+    if (hasActiveSub) {
+      if (tenantVariant === 'pro') {
+        return (
+          <button 
+            disabled
+            className="w-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-6 py-4 rounded-2xl font-bold mt-auto tracking-wide cursor-not-allowed"
+          >
+            Seu Plano Atual
+          </button>
+        );
+      }
+      return (
+        <button 
+          onClick={onManageSubscription}
+          className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white px-6 py-4 rounded-2xl font-bold transition-all mt-auto tracking-wide border border-indigo-500 shadow-lg shadow-indigo-500/20 cursor-pointer"
+        >
+          Fazer Upgrade para Pro
+        </button>
+      );
+    }
+
+    return (
+      <button 
+        onClick={() => onSubscribe('pro')}
+        className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white px-6 py-4 rounded-2xl font-bold transition-all mt-auto tracking-wide border border-indigo-500 shadow-lg shadow-indigo-500/20 cursor-pointer"
+      >
+        Assinar Pro
+      </button>
+    );
+  };
+
   return (
     <section id="pricing" className="py-32 text-white relative z-10 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -1488,18 +1747,24 @@ function PricingSection() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-cyan-500/20 transition-all duration-500" />
             <div className="relative z-10 flex flex-col h-full">
               <h3 className="text-3xl font-bold mb-3 tracking-tight">Básico</h3>
-              <p className="text-slate-400 mb-8 leading-relaxed">Comece a se organizar hoje mesmo saindo do papel.</p>
+              <p className="text-slate-400 mb-8 leading-relaxed">Ideal para começar a se organizar saindo do papel.</p>
               <div className="mb-8">
-                <span className="text-5xl font-black text-white tracking-tight">R$ 49</span>
+                <span className="text-5xl font-black text-white tracking-tight">R$ 49,90</span>
                 <span className="text-slate-400 font-medium">/mês</span>
               </div>
               
               <ul className="flex flex-col gap-5 mb-10 flex-1">
                 <li className="flex items-start gap-4 text-slate-300 text-sm md:text-base">
-                  <div className="mt-1 bg-cyan-500/10 p-1 rounded-full border border-cyan-500/20"><Check size={14} className="text-cyan-400" /></div> Até 300 veículos por mês
+                  <div className="mt-1 bg-cyan-500/10 p-1 rounded-full border border-cyan-500/20"><Check size={14} className="text-cyan-400" /></div> 1 usuário (o dono)
+                </li>
+                <li className="flex items-start gap-4 text-slate-300 text-sm md:text-base">
+                  <div className="mt-1 bg-cyan-500/10 p-1 rounded-full border border-cyan-500/20"><Check size={14} className="text-cyan-400" /></div> Clientes e veículos ilimitados
                 </li>
                 <li className="flex items-start gap-4 text-slate-300 text-sm md:text-base">
                   <div className="mt-1 bg-cyan-500/10 p-1 rounded-full border border-cyan-500/20"><Check size={14} className="text-cyan-400" /></div> Controle de fila no pátio
+                </li>
+                <li className="flex items-start gap-4 text-slate-300 text-sm md:text-base">
+                  <div className="mt-1 bg-cyan-500/10 p-1 rounded-full border border-cyan-500/20"><Check size={14} className="text-cyan-400" /></div> Registro e histórico de serviços
                 </li>
                 <li className="flex items-start gap-4 text-slate-300 text-sm md:text-base">
                   <div className="mt-1 bg-cyan-500/10 p-1 rounded-full border border-cyan-500/20"><Check size={14} className="text-cyan-400" /></div> Avisos automáticos no WhatsApp
@@ -1509,48 +1774,56 @@ function PricingSection() {
                 </li>
               </ul>
 
-              <button className="w-full bg-white/5 hover:bg-white/10 text-white border border-white/10 px-6 py-4 rounded-2xl font-bold transition-all mt-auto tracking-wide">
-                Assinar Básico
-              </button>
+              {renderBasicButton()}
             </div>
           </div>
 
-          {/* Advanced Plan */}
+          {/* Pro Plan */}
           <div className="bg-slate-900/80 backdrop-blur-xl border border-indigo-500/30 rounded-3xl p-10 flex flex-col relative transform lg:-translate-y-4 shadow-2xl overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 blur-[80px] rounded-full pointer-events-none group-hover:bg-indigo-500/30 transition-all duration-500" />
             <div className="absolute -top-px left-1/2 -translate-x-1/2 w-[80%] h-px bg-gradient-to-r from-transparent via-indigo-400 to-transparent shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
             
             <div className="relative z-10 flex flex-col h-full">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-3xl font-bold tracking-tight">Avançado</h3>
+                <h3 className="text-3xl font-bold tracking-tight">Pro</h3>
                 <span className="bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                   Mais Escolhido
                 </span>
               </div>
               <p className="text-slate-400 mb-8 leading-relaxed">Para estéticas automotivas em crescimento rápido.</p>
               <div className="mb-8">
-                <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400 tracking-tight">R$ 97</span>
+                <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400 tracking-tight">R$ 89,90</span>
                 <span className="text-slate-400 font-medium">/mês</span>
               </div>
               
               <ul className="flex flex-col gap-5 mb-10 flex-1">
                 <li className="flex items-start gap-4 text-white text-sm md:text-base">
-                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> <span className="font-bold">Veículos ilimitados no mês</span>
+                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> Até 5 usuários (atendentes)
                 </li>
                 <li className="flex items-start gap-4 text-white text-sm md:text-base">
-                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> Leitura inteligente e automática de placas
+                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> Clientes e veículos ilimitados
                 </li>
                 <li className="flex items-start gap-4 text-white text-sm md:text-base">
-                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> CRM com perfil completo de clientes
+                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> Fila em tempo real e WhatsApp
                 </li>
                 <li className="flex items-start gap-4 text-white text-sm md:text-base">
-                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> Histórico completo e detalhado de veículos
+                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> Relatórios financeiros detalhados
+                </li>
+                <li className="flex items-start gap-4 text-white text-sm md:text-base">
+                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> OCR inteligente (importação de folhas)
+                </li>
+                <li className="flex items-start gap-4 text-white text-sm md:text-base">
+                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> Gestão e controle de despesas
+                </li>
+                <li className="flex items-start gap-4 text-white text-sm md:text-base">
+                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> Exportação em PDF e Backup
+                </li>
+                <li className="flex items-start gap-4 text-white text-sm md:text-base">
+                  <div className="mt-1 bg-indigo-500/20 p-1 rounded-full border border-indigo-500/30"><Check size={14} className="text-indigo-400" /></div> Suporte prioritário via WhatsApp
                 </li>
               </ul>
 
-              <button className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white px-6 py-4 rounded-2xl font-bold transition-all mt-auto tracking-wide border border-indigo-500 shadow-lg shadow-indigo-500/20">
-                Comece Grátis Agora
-              </button>
+              {renderProButton()}
             </div>
           </div>
           
