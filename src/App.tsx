@@ -795,13 +795,23 @@ function HeroSection() {
                 Fim da bagunça no pátio e agendas de papel. Administre a fila de veículos, avise o cliente pelo WhatsApp com 1 clique e fature mais.
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button className="bg-cyan-500 hover:bg-cyan-400 text-white px-8 py-4 rounded-full text-base font-semibold flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-500/30">
+              <div className="flex flex-col sm:flex-row gap-4 items-center">
+                <button className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-400 text-white px-8 py-4 rounded-full text-base font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-500/30 cursor-pointer active:scale-95 duration-200">
                   Criar Conta Grátis <ArrowRight size={18} />
                 </button>
-                <button className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white px-8 py-4 rounded-full text-base font-medium flex items-center justify-center gap-2 transition-all shadow-sm">
-                  <Smartphone size={18} /> Baixar App (Android)
-                </button>
+                <a 
+                  href="https://github.com/alexandermarquesm/vip-car-website/releases/download/v2.0.6/viper-car-2.0.6.apk" 
+                  download
+                  className="w-full sm:w-auto bg-slate-900 hover:bg-slate-950 border border-white/10 hover:border-cyan-500/50 text-white px-8 py-2.5 rounded-full text-base font-medium flex items-center justify-center gap-3 transition-all duration-300 shadow-lg hover:shadow-cyan-500/10 group cursor-pointer active:scale-95"
+                >
+                  <Smartphone size={22} className="text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
+                  <div className="flex flex-col items-start text-left leading-tight">
+                    <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Disponível para Android</span>
+                    <span className="text-sm font-bold flex items-center gap-1.5">
+                      Baixar App <span className="text-[10px] font-normal text-slate-400 bg-white/5 px-1.5 py-0.5 rounded group-hover:bg-cyan-500/20 group-hover:text-cyan-300 transition-colors">v2.0.6</span>
+                    </span>
+                  </div>
+                </a>
               </div>
               
               <div className="mt-10 flex items-center gap-4 text-sm text-slate-400">
@@ -1847,13 +1857,23 @@ function BottomCTA() {
         <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto relative z-10 leading-relaxed tracking-wide">
           Deixe a papelada e a desorganização no passado. Crie sua conta e sinta a diferença que a tecnologia pode trazer para você.
         </p>
-        <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
-          <button className="bg-cyan-500 hover:bg-cyan-400 text-white px-8 py-4 rounded-2xl text-lg font-bold shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group/btn">
+        <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10 items-center">
+          <button className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-400 text-white px-8 py-4 rounded-2xl text-lg font-bold shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group/btn cursor-pointer active:scale-95 duration-200">
             Criar Conta Grátis <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
           </button>
-          <button className="bg-slate-800/80 backdrop-blur-md border border-white/10 text-white px-8 py-4 rounded-2xl text-lg font-semibold hover:bg-slate-700/80 transition-all flex items-center justify-center gap-3">
-            <Smartphone size={20} className="text-slate-400" /> Baixar App (Android)
-          </button>
+          <a 
+            href="https://github.com/alexandermarquesm/vip-car-website/releases/download/v2.0.6/viper-car-2.0.6.apk" 
+            download
+            className="w-full sm:w-auto bg-slate-900 hover:bg-slate-950 border border-white/10 hover:border-cyan-500/50 text-white px-8 py-3 rounded-2xl text-lg font-semibold transition-all duration-300 flex items-center justify-center gap-4 group hover:shadow-lg hover:shadow-cyan-500/5 active:scale-95 cursor-pointer"
+          >
+            <Smartphone size={24} className="text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
+            <div className="flex flex-col items-start text-left leading-tight">
+              <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Disponível para Android</span>
+              <span className="text-base font-bold flex items-center gap-1.5">
+                Baixar APK do App <span className="text-[10px] font-normal text-slate-400 bg-white/5 px-1.5 py-0.5 rounded group-hover:bg-cyan-500/20 group-hover:text-cyan-300 transition-colors">v2.0.6</span>
+              </span>
+            </div>
+          </a>
         </div>
       </div>
     </section>
