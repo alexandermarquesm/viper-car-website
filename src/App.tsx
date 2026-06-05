@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useScroll } from 'motion/react';
 import { 
   Car, Calendar, BarChart3, Bell, CheckCircle2, ChevronRight, 
   Smartphone, Droplets, Wallet, Users, ArrowRight, Menu, X, Clock, Settings,
@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 
 export default function App() {
+  const { scrollYProgress } = useScroll();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -111,10 +112,16 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-white bg-[#020617] text-white relative">
+      {/* Scroll Progress Bar */}
+      <motion.div 
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-indigo-500 z-[100] origin-left" 
+        style={{ scaleX: scrollYProgress }} 
+      />
+
       {/* Ambient Mesh Gradients */}
-      <div className="fixed top-[-100px] left-[-100px] w-[500px] h-[500px] bg-indigo-600/30 rounded-full blur-[120px] pointer-events-none z-0"></div>
-      <div className="fixed top-[20%] right-[10%] w-[300px] h-[300px] bg-purple-600/20 rounded-full blur-[100px] pointer-events-none z-0"></div>
-      <div className="fixed bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      <div className="fixed top-[-100px] left-[-100px] w-[500px] h-[500px] bg-indigo-600/25 rounded-full blur-[120px] pointer-events-none z-0 animate-glow-1"></div>
+      <div className="fixed top-[20%] right-[10%] w-[300px] h-[300px] bg-purple-600/15 rounded-full blur-[100px] pointer-events-none z-0 animate-glow-2"></div>
+      <div className="fixed bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-cyan-500/15 rounded-full blur-[120px] pointer-events-none z-0 animate-glow-3"></div>
 
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 bg-[#020617]/50 backdrop-blur-md z-50 border-b border-white/10">
@@ -796,23 +803,39 @@ function HeroSection({ onSignUp }: { onSignUp: () => void }) {
         <div className="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
           
           <div className="mb-16 lg:mb-0 max-w-2xl perspective-[1000px]">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-6">
+            <div className="flex flex-col">
+              <motion.div 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="inline-flex self-start items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-6"
+              >
                 <span className="flex h-2 w-2 rounded-full bg-indigo-400 animate-pulse"></span>
                 Mais prático, mais rápido
-              </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6">
+              </motion.div>
+              <motion.h1 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6"
+              >
                 Acelere a gestão <br/> da sua <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">Lavagem</span>
-              </h1>
-              <p className="text-xl text-slate-400 mb-8 leading-relaxed max-w-xl">
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="text-xl text-slate-400 mb-8 leading-relaxed max-w-xl"
+              >
                 Fim da bagunça no pátio e agendas de papel. Administre a fila de veículos, avise o cliente pelo WhatsApp com 1 clique e fature mais.
-              </p>
+              </motion.p>
               
-              <div className="flex flex-col sm:flex-row gap-4 items-center">
+              <motion.div 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="flex flex-col sm:flex-row gap-4 items-center"
+              >
                 <button 
                   onClick={onSignUp}
                   className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-400 text-white px-8 py-4 rounded-full text-base font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-500/30 cursor-pointer active:scale-95 duration-200 text-center"
@@ -832,9 +855,14 @@ function HeroSection({ onSignUp }: { onSignUp: () => void }) {
                     </span>
                   </div>
                 </a>
-              </div>
+              </motion.div>
               
-              <div className="mt-10 flex items-center gap-4 text-sm text-slate-400">
+              <motion.div 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="mt-10 flex items-center gap-4 text-sm text-slate-400"
+              >
                 <div className="flex -space-x-2">
                   {[1,2,3,4].map(i => (
                     <div key={i} className="w-8 h-8 rounded-full bg-slate-800 border-2 border-[#020617] overflow-hidden">
@@ -843,8 +871,8 @@ function HeroSection({ onSignUp }: { onSignUp: () => void }) {
                   ))}
                 </div>
                 <p>Junte-se a <strong className="text-white">vários hubs</strong> automotivos de sucesso</p>
-              </div>
-            </motion.div>
+              </motion.div>
+            </div>
           </div>
 
           <div className="relative mx-auto w-full max-w-[340px] lg:max-w-none lg:w-[400px] select-none pointer-events-none">
@@ -1061,7 +1089,9 @@ function FeaturesSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="md:col-span-2 md:row-span-2 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:bg-slate-800/50 transition-all group overflow-hidden relative"
+            whileHover={{ y: -6, scale: 1.01, borderColor: "rgba(6, 182, 212, 0.35)", boxShadow: "0 20px 40px -15px rgba(6, 182, 212, 0.15)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="md:col-span-2 md:row-span-2 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:bg-slate-800/50 transition-all group overflow-hidden relative cursor-pointer"
           >
             <div className="absolute -right-20 -top-20 w-64 h-64 bg-cyan-500/20 blur-[100px] rounded-full pointer-events-none" />
             <div className="flex flex-col h-full z-10 relative">
@@ -1115,8 +1145,9 @@ function FeaturesSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="md:col-span-2 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:bg-slate-800/50 transition-all flex items-center justify-between gap-6 group overflow-hidden relative"
+            whileHover={{ y: -6, scale: 1.01, borderColor: "rgba(236, 72, 153, 0.35)", boxShadow: "0 20px 40px -15px rgba(236, 72, 153, 0.15)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="md:col-span-2 bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:bg-slate-800/50 transition-all flex items-center justify-between gap-6 group overflow-hidden relative cursor-pointer"
           >
             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-48 h-48 bg-pink-500/10 blur-[80px] rounded-full pointer-events-none" />
             <div className="flex items-center gap-6 relative z-10 w-full">
@@ -1137,8 +1168,9 @@ function FeaturesSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:bg-slate-800/50 transition-all group overflow-hidden relative"
+            whileHover={{ y: -6, scale: 1.015, borderColor: "rgba(168, 85, 247, 0.35)", boxShadow: "0 20px 40px -15px rgba(168, 85, 247, 0.15)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:bg-slate-800/50 transition-all group overflow-hidden relative cursor-pointer"
           >
             <div className="absolute -left-10 top-10 w-32 h-32 bg-purple-500/20 blur-[60px] rounded-full pointer-events-none" />
             <div className="relative z-10 flex flex-col h-full">
@@ -1159,8 +1191,9 @@ function FeaturesSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:bg-slate-800/50 transition-all group overflow-hidden relative"
+            whileHover={{ y: -6, scale: 1.015, borderColor: "rgba(249, 115, 22, 0.35)", boxShadow: "0 20px 40px -15px rgba(249, 115, 22, 0.15)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:bg-slate-800/50 transition-all group overflow-hidden relative cursor-pointer"
           >
             <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-orange-500/20 blur-[60px] rounded-full pointer-events-none" />
             <div className="relative z-10 flex flex-col h-full">
@@ -1580,7 +1613,9 @@ function BenefitsSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="md:col-span-2 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-[2rem] p-8 lg:p-12 overflow-hidden relative group hover:border-cyan-500/30 transition-colors"
+            whileHover={{ y: -6, scale: 1.01, borderColor: "rgba(6, 182, 212, 0.35)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="md:col-span-2 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-[2rem] p-8 lg:p-12 overflow-hidden relative group hover:border-cyan-500/30 transition-colors cursor-pointer"
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[80px] rounded-full group-hover:bg-cyan-500/20 transition-colors" />
             <div className="relative z-10 w-full h-full flex flex-col justify-center">
@@ -1598,8 +1633,9 @@ function BenefitsSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="bg-gradient-to-br from-indigo-900/40 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-[2rem] p-8 lg:p-10 relative group hover:border-indigo-500/30 transition-colors"
+            whileHover={{ y: -6, scale: 1.015, borderColor: "rgba(99, 102, 241, 0.35)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="bg-gradient-to-br from-indigo-900/40 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-[2rem] p-8 lg:p-10 relative group hover:border-indigo-500/30 transition-colors cursor-pointer"
           >
             <div className="absolute bottom-0 right-0 w-40 h-40 bg-indigo-500/10 blur-[60px] rounded-full group-hover:bg-indigo-500/20 transition-colors" />
             <div className="relative z-10">
@@ -1617,8 +1653,9 @@ function BenefitsSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="bg-gradient-to-br from-emerald-900/40 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-[2rem] p-8 lg:p-10 relative group hover:border-emerald-500/30 transition-colors"
+            whileHover={{ y: -6, scale: 1.015, borderColor: "rgba(16, 185, 129, 0.35)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="bg-gradient-to-br from-emerald-900/40 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-[2rem] p-8 lg:p-10 relative group hover:border-emerald-500/30 transition-colors cursor-pointer"
           >
             <div className="absolute top-0 left-0 w-40 h-40 bg-emerald-500/10 blur-[60px] rounded-full group-hover:bg-emerald-500/20 transition-colors" />
             <div className="relative z-10">
@@ -1636,8 +1673,9 @@ function BenefitsSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="md:col-span-2 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-[2rem] p-8 lg:p-12 overflow-hidden relative group hover:border-pink-500/30 transition-colors"
+            whileHover={{ y: -6, scale: 1.01, borderColor: "rgba(236, 72, 153, 0.35)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="md:col-span-2 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-[2rem] p-8 lg:p-12 overflow-hidden relative group hover:border-pink-500/30 transition-colors cursor-pointer"
           >
             <div className="absolute bottom-0 left-10 w-64 h-64 bg-pink-500/10 blur-[80px] rounded-full group-hover:bg-pink-500/20 transition-colors" />
             <div className="relative z-10 w-full h-full flex flex-col justify-center">
@@ -1773,7 +1811,14 @@ function PricingSection({
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
           {/* Basic Plan */}
-          <div className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-10 flex flex-col hover:bg-slate-800/50 transition-all relative overflow-hidden group">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ y: -8, scale: 1.01, borderColor: "rgba(6, 182, 212, 0.35)", boxShadow: "0 20px 40px -15px rgba(6, 182, 212, 0.15)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-3xl p-10 flex flex-col hover:bg-slate-800/50 transition-all relative overflow-hidden group cursor-pointer"
+          >
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-cyan-500/20 transition-all duration-500" />
             <div className="relative z-10 flex flex-col h-full">
               <h3 className="text-3xl font-bold mb-3 tracking-tight">Básico</h3>
@@ -1806,10 +1851,17 @@ function PricingSection({
 
               {renderBasicButton()}
             </div>
-          </div>
+          </motion.div>
 
           {/* Pro Plan */}
-          <div className="bg-slate-900/80 backdrop-blur-xl border border-indigo-500/30 rounded-3xl p-10 flex flex-col relative transform lg:-translate-y-4 shadow-2xl overflow-hidden group">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ y: -12, scale: 1.015, borderColor: "rgba(99, 102, 241, 0.5)", boxShadow: "0 25px 50px -12px rgba(99, 102, 241, 0.25)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="bg-slate-900/80 backdrop-blur-xl border border-indigo-500/30 rounded-3xl p-10 flex flex-col relative lg:-translate-y-4 shadow-2xl overflow-hidden group cursor-pointer"
+          >
             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 blur-[80px] rounded-full pointer-events-none group-hover:bg-indigo-500/30 transition-all duration-500" />
             <div className="absolute -top-px left-1/2 -translate-x-1/2 w-[80%] h-px bg-gradient-to-r from-transparent via-indigo-400 to-transparent shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
             
@@ -1855,7 +1907,7 @@ function PricingSection({
 
               {renderProButton()}
             </div>
-          </div>
+          </motion.div>
           
         </div>
       </div>
