@@ -35,6 +35,14 @@ export default function App() {
     setUser(null);
   };
 
+  const handleSignUp = () => {
+    if (user) {
+      window.open('https://viper-car-app.vercel.app', '_blank');
+    } else {
+      setIsLoginOpen(true);
+    }
+  };
+
   const apiUrl = import.meta.env.VITE_API_URL || 'https://viper-car-api.vercel.app';
 
   const handleSubscribe = async (plan: 'basic' | 'pro') => {
@@ -147,7 +155,10 @@ export default function App() {
                   >
                     Login
                   </button>
-                  <button className="bg-cyan-500 hover:bg-cyan-400 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-cyan-500/30">
+                  <button 
+                    onClick={() => setIsLoginOpen(true)}
+                    className="bg-cyan-500 hover:bg-cyan-400 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-cyan-500/30 text-center cursor-pointer"
+                  >
                     Criar Conta Grátis
                   </button>
                 </div>
@@ -212,7 +223,13 @@ export default function App() {
                     >
                       Login
                     </button>
-                    <button className="w-full text-center py-3 bg-cyan-500 rounded-xl font-bold text-white shadow-lg shadow-cyan-500/20">
+                    <button 
+                      onClick={() => {
+                        setIsLoginOpen(true);
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full text-center py-3 bg-cyan-500 rounded-xl font-bold text-white shadow-lg shadow-cyan-500/20 cursor-pointer"
+                    >
                       Criar Conta Grátis
                     </button>
                   </div>
@@ -224,12 +241,12 @@ export default function App() {
       </nav>
 
       <main className="flex-grow pt-16">
-        <HeroSection />
+        <HeroSection onSignUp={handleSignUp} />
         <FeaturesSection />
         <InteractiveSection />
         <BenefitsSection />
         <PricingSection user={user} onSubscribe={handleSubscribe} onManageSubscription={handleManageSubscription} />
-        <BottomCTA />
+        <BottomCTA onSignUp={handleSignUp} />
       </main>
 
       <Footer />
@@ -669,7 +686,7 @@ function LoginModal({ onClose, onLoginSuccess }: { onClose: () => void, onLoginS
 
           <div className="mt-10 text-center">
             <p className="text-sm text-slate-500">
-              Não tem uma conta? <a href="#" className="font-bold text-white hover:text-cyan-400 transition-colors">Crie grátis agora</a>
+              Não tem uma conta? <a href="https://viper-car-app.vercel.app" target="_blank" rel="noopener noreferrer" className="font-bold text-white hover:text-cyan-400 transition-colors">Crie grátis agora</a>
             </p>
           </div>
         </div>
@@ -760,7 +777,7 @@ const MOCK_SERVICES = [
 ];
 
 {/* --- HERO SECTION --- */}
-function HeroSection() {
+function HeroSection({ onSignUp }: { onSignUp: () => void }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -796,7 +813,10 @@ function HeroSection() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 items-center">
-                <button className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-400 text-white px-8 py-4 rounded-full text-base font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-500/30 cursor-pointer active:scale-95 duration-200">
+                <button 
+                  onClick={onSignUp}
+                  className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-400 text-white px-8 py-4 rounded-full text-base font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-cyan-500/30 cursor-pointer active:scale-95 duration-200 text-center"
+                >
                   Criar Conta Grátis <ArrowRight size={18} />
                 </button>
                 <a 
@@ -1844,7 +1864,7 @@ function PricingSection({
 }
 
 {/* --- CTA BOTTOM --- */}
-function BottomCTA() {
+function BottomCTA({ onSignUp }: { onSignUp: () => void }) {
   return (
     <section className="py-24 relative z-10 px-4 mb-16">
       <div className="max-w-6xl mx-auto bg-slate-900/50 backdrop-blur-xl border border-white/10 rounded-[3rem] p-10 lg:p-16 text-center relative overflow-hidden shadow-2xl group">
@@ -1858,7 +1878,10 @@ function BottomCTA() {
           Deixe a papelada e a desorganização no passado. Crie sua conta e sinta a diferença que a tecnologia pode trazer para você.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10 items-center">
-          <button className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-400 text-white px-8 py-4 rounded-2xl text-lg font-bold shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group/btn cursor-pointer active:scale-95 duration-200">
+          <button 
+            onClick={onSignUp}
+            className="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-400 text-white px-8 py-4 rounded-2xl text-lg font-bold shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 group/btn cursor-pointer active:scale-95 duration-200 text-center"
+          >
             Criar Conta Grátis <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
           </button>
           <a 
