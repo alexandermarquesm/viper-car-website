@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.alexandermarquesm.vipercar",
+      "sha256_cert_fingerprints": [
+        "6C:A2:37:AB:6A:66:ED:E8:28:84:4B:7D:52:33:98:0E:C4:BA:25:14:E0:25:28:9E:E6:CC:AF:05:8D:22:E1:BA"
+      ]
+    }
+  }
+]
