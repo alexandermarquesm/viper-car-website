@@ -1,0 +1,79 @@
+/**
+ * Design System tokens for Viper Car
+ */
+
+:root {
+  /* Fonts */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+
+  /* Global Theme - LIGHT MODE */
+  --color-bg: #f8fafc; /* slate-50 */
+  --color-text-primary: #0f172a; /* slate-900 */
+  --color-text-secondary: #475569; /* slate-600 */
+  --color-text-muted: #64748b; /* slate-500 */
+  
+  /* Cards */
+  --color-card-bg: #ffffff;
+  --color-card-border: rgba(15, 23, 42, 0.08);
+  --color-card-hover-border: rgba(15, 23, 42, 0.15);
+  
+  /* Navigation */
+  --color-nav-bg: rgba(255, 255, 255, 0.75);
+  --color-nav-border: rgba(15, 23, 42, 0.08);
+
+  /* Brand Colors */
+  --color-brand: #06b6d4; /* cyan-500 */
+  --color-brand-hover: #0891b2; /* cyan-600 */
+  
+  /* Ambient Mesh Glows (more subtle in light mode) */
+  --color-glow-indigo: rgba(99, 102, 241, 0.05);
+  --color-glow-purple: rgba(147, 51, 234, 0.03);
+  --color-glow-cyan: rgba(6, 182, 212, 0.04);
+
+  /* Footer */
+  --color-footer-bg: #f1f5f9; /* slate-100 */
+  --color-footer-border: rgba(15, 23, 42, 0.05);
+
+  /* Modals */
+  --color-modal-bg: #ffffff;
+  --color-modal-border: rgba(15, 23, 42, 0.1);
+  --color-modal-input: #f8fafc;
+  --color-modal-input-border: #e2e8f0;
+}
+
+.dark {
+  /* Global Theme - DARK MODE */
+  --color-bg: #020617; /* deep blue-black */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #cbd5e1; /* slate-300 */
+  --color-text-muted: #94a3b8; /* slate-400 */
+  
+  /* Cards */
+  --color-card-bg: rgba(255, 255, 255, 0.03);
+  --color-card-border: rgba(255, 255, 255, 0.08);
+  --color-card-hover-border: rgba(255, 255, 255, 0.15);
+  
+  /* Navigation */
+  --color-nav-bg: rgba(2, 6, 23, 0.5);
+  --color-nav-border: rgba(255, 255, 255, 0.1);
+
+  /* Brand Colors */
+  --color-brand: #06b6d4;
+  --color-brand-hover: #22d3ee; /* cyan-400 */
+  
+  /* Ambient Mesh Glows */
+  --color-glow-indigo: rgba(79, 70, 229, 0.25);
+  --color-glow-purple: rgba(147, 51, 234, 0.15);
+  --color-glow-cyan: rgba(6, 182, 212, 0.15);
+
+  /* Footer */
+  --color-footer-bg: #020617;
+  --color-footer-border: rgba(255, 255, 255, 0.05);
+
+  /* Modals */
+  --color-modal-bg: #090d1f;
+  --color-modal-border: rgba(255, 255, 255, 0.08);
+  --color-modal-input: rgba(255, 255, 255, 0.03);
+  --color-modal-input-border: rgba(255, 255, 255, 0.08);
+}

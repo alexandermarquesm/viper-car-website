@@ -1,20 +1,47 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap');
 @import "tailwindcss";
+@import "./styles/design-system.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --color-brand: #06b6d4;
-  --color-brand-dark: #0891b2;
-  --color-bg: #020617;
-  --color-ink: #ffffff;
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+
+  /* Semantic Design System Colors */
+  --color-bg: var(--color-bg);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  
+  --color-card-bg: var(--color-card-bg);
+  --color-card-border: var(--color-card-border);
+  --color-card-hover-border: var(--color-card-hover-border);
+  
+  --color-nav-bg: var(--color-nav-bg);
+  --color-nav-border: var(--color-nav-border);
+
+  --color-brand: var(--color-brand);
+  --color-brand-hover: var(--color-brand-hover);
+  
+  --color-glow-indigo: var(--color-glow-indigo);
+  --color-glow-purple: var(--color-glow-purple);
+  --color-glow-cyan: var(--color-glow-cyan);
+
+  --color-footer-bg: var(--color-footer-bg);
+  --color-footer-border: var(--color-footer-border);
+
+  --color-modal-bg: var(--color-modal-bg);
+  --color-modal-border: var(--color-modal-border);
+  --color-modal-input: var(--color-modal-input);
+  --color-modal-input-border: var(--color-modal-input-border);
 }
 
 body {
   font-family: var(--font-sans);
   background-color: var(--color-bg);
-  color: var(--color-ink);
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -30,29 +57,86 @@ h1, h2, h3, h4, h5, h6 {
   scrollbar-width: none;  /* Firefox */
 }
 
-/* Background Ambient Glow Animations */
+/* Background Ambient Glow Animations with hardware acceleration */
 @keyframes float-glow-1 {
-  0%, 100% { transform: translate(0, 0); }
-  33% { transform: translate(120px, -80px) scale(1.05); }
-  66% { transform: translate(-60px, 60px) scale(0.95); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  33% { transform: translate3d(120px, -80px, 0) scale(1.05); }
+  66% { transform: translate3d(-60px, 60px, 0) scale(0.95); }
 }
 @keyframes float-glow-2 {
-  0%, 100% { transform: translate(0, 0); }
-  33% { transform: translate(-100px, 100px) scale(0.95); }
-  66% { transform: translate(80px, -60px) scale(1.05); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  33% { transform: translate3d(-100px, 100px, 0) scale(0.95); }
+  66% { transform: translate3d(80px, -60px, 0) scale(1.05); }
 }
 @keyframes float-glow-3 {
-  0%, 100% { transform: translate(0, 0); }
-  33% { transform: translate(80px, -120px) scale(1.08); }
-  66% { transform: translate(-100px, 80px) scale(0.92); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  33% { transform: translate3d(80px, -120px, 0) scale(1.08); }
+  66% { transform: translate3d(-100px, 80px, 0) scale(0.92); }
 }
 
 .animate-glow-1 {
+  will-change: transform;
   animation: float-glow-1 22s ease-in-out infinite;
 }
 .animate-glow-2 {
+  will-change: transform;
   animation: float-glow-2 26s ease-in-out infinite;
 }
 .animate-glow-3 {
+  will-change: transform;
   animation: float-glow-3 24s ease-in-out infinite;
+}
+
+.gpu-layer {
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@keyframes float-phone {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
+.animate-float-phone {
+  animation: float-phone 6s ease-in-out infinite;
+}
+
+@keyframes pulse-scale {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.animate-pulse-scale {
+  will-change: transform;
+  animation: pulse-scale 2s ease-in-out infinite;
+}
+
+@keyframes wiggle-rotate {
+  0%, 100% {
+    transform: rotate(-8deg);
+  }
+  50% {
+    transform: rotate(8deg);
+  }
+}
+
+.animate-wiggle-rotate-delayed {
+  will-change: transform;
+  animation: wiggle-rotate 4s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+/* Dynamic smooth theme transition helper class for complex elements */
+.theme-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
