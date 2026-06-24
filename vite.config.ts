@@ -10,6 +10,17 @@ export default defineConfig(({mode}) => {
     define: {
       'process.env.VITE_API_URL': JSON.stringify(env.VITE_API_URL),
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return 'vendor';
+            }
+          }
+        }
+      }
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

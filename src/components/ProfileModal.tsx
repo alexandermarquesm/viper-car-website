@@ -108,6 +108,7 @@ export function ProfileModal({
           <button
             onClick={onClose}
             className="absolute top-6 right-6 p-2 rounded-full bg-card-bg text-text-secondary border border-card-border hover:text-text-primary hover:bg-card-bg/85 transition-all cursor-pointer"
+            aria-label="Fechar"
           >
             <X size={20} />
           </button>
@@ -118,6 +119,7 @@ export function ProfileModal({
                 <button
                   onClick={() => setShowPlans(false)}
                   className="p-1.5 rounded-xl bg-card-bg text-text-secondary hover:text-text-primary hover:bg-card-bg/85 border border-card-border transition-all cursor-pointer"
+                  aria-label="Voltar"
                 >
                   <ArrowLeft size={16} />
                 </button>
@@ -133,7 +135,7 @@ export function ProfileModal({
                   className="w-full bg-modal-input hover:bg-slate-200 dark:hover:bg-white/10 border border-modal-input-border rounded-3xl p-5 text-left flex items-center justify-between transition-all group cursor-pointer"
                 >
                   <div>
-                    <h4 className="font-bold text-text-primary mb-1">{t.profile.planBasic}</h4>
+                    <h3 className="font-bold text-text-primary mb-1">{t.profile.planBasic}</h3>
                     <p className="text-text-secondary text-xs">
                       {t.profile.planBasicDesc}
                     </p>
@@ -155,13 +157,13 @@ export function ProfileModal({
                     {t.pricing.proBadge}
                   </div>
                   <div>
-                    <h4 className="font-bold text-white mb-1 flex items-center gap-1.5">
+                    <h3 className="font-bold text-white mb-1 flex items-center gap-1.5">
                       {t.profile.planPro}{" "}
                       <Zap
                         size={12}
                         className="text-amber-400 fill-amber-400"
                       />
-                    </h4>
+                    </h3>
                     <p className="text-indigo-200 text-xs">
                       {t.profile.planProDesc}
                     </p>

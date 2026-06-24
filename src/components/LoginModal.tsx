@@ -79,29 +79,32 @@ export function LoginModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="relative w-full max-w-md bg-modal-bg border border-modal-border rounded-[2.5rem] shadow-2xl overflow-hidden transition-colors duration-300"
+        className="relative w-full max-w-md bg-modal-bg border border-modal-border rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden transition-colors duration-300"
       >
         {/* Ambient background light */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-cyan-500/20 blur-[80px] rounded-full pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/20 blur-[80px] rounded-full pointer-events-none" />
 
-        <div className="relative z-10 p-8 sm:p-10">
+        <div className="relative z-10 p-6 sm:p-10">
           <button
             onClick={onClose}
             className="absolute top-6 right-6 p-2 rounded-full bg-card-bg text-text-secondary border border-card-border hover:text-text-primary hover:bg-card-bg/85 transition-all cursor-pointer"
+            aria-label="Fechar"
           >
             <X size={20} />
           </button>
 
-          <div className="mb-10 text-center">
-            <div className="inline-flex w-32 h-32 rounded-full bg-card-bg items-center justify-center shadow-2xl shadow-cyan-500/5 mb-6 border border-card-border overflow-hidden">
+          <div className="mb-6 sm:mb-8 text-center">
+            <div className="inline-flex w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-card-bg items-center justify-center shadow-2xl shadow-cyan-500/5 mb-4 sm:mb-6 border border-card-border overflow-hidden">
               <img
                 src="/logo.png"
                 alt="Viper Car Emblem"
+                width={112}
+                height={112}
                 className="w-full h-full object-contain p-2"
               />
             </div>
-            <h2 className="text-3xl font-display font-bold text-text-primary mb-2 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-text-primary mb-2 tracking-tight">
               {t.login.title}
             </h2>
             <p className="text-text-secondary text-sm">
@@ -134,7 +137,7 @@ export function LoginModal({
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t.login.placeholderEmail}
                   disabled={isLoading}
-                  className="w-full bg-modal-input border border-modal-input-border rounded-2xl py-4 pl-12 pr-4 text-text-primary placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all disabled:opacity-50"
+                  className="w-full bg-modal-input border border-modal-input-border rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-text-primary placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all disabled:opacity-50"
                 />
               </div>
             </div>
@@ -153,7 +156,7 @@ export function LoginModal({
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t.login.placeholderPassword}
                   disabled={isLoading}
-                  className="w-full bg-modal-input border border-modal-input-border rounded-2xl py-4 pl-12 pr-4 text-text-primary placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all disabled:opacity-50"
+                  className="w-full bg-modal-input border border-modal-input-border rounded-2xl py-3 sm:py-4 pl-12 pr-4 text-text-primary placeholder:text-text-muted/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all disabled:opacity-50"
                 />
               </div>
               <div className="flex justify-end mt-2">
@@ -169,7 +172,7 @@ export function LoginModal({
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-cyan-500/30 transition-all active:scale-[0.98] mt-4 flex items-center justify-center gap-3 disabled:opacity-70 cursor-pointer"
+              className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 sm:py-4 rounded-2xl font-bold text-lg shadow-lg shadow-cyan-500/30 transition-all active:scale-[0.98] mt-2 sm:mt-4 flex items-center justify-center gap-3 disabled:opacity-70 cursor-pointer"
             >
               {isLoading ? (
                 <>
@@ -182,16 +185,16 @@ export function LoginModal({
             </button>
           </form>
 
-          <div className="mt-8">
-            <div className="relative flex items-center justify-center mb-6">
+          <div className="mt-6 sm:mt-8">
+            <div className="relative flex items-center justify-center mb-4 sm:mb-6">
               <div className="absolute inset-x-0 h-px bg-card-border"></div>
               <span className="relative px-4 bg-modal-bg text-xs font-bold text-text-muted uppercase tracking-widest transition-colors duration-300">
                 {t.login.dividerOr}
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <button className="flex items-center justify-center gap-3 bg-card-bg border border-card-border py-3 rounded-xl hover:bg-slate-200 dark:hover:bg-white/10 transition-all text-sm font-semibold text-text-primary cursor-pointer">
+            <div className="flex flex-col gap-4">
+              <button className="flex items-center justify-center gap-3 bg-card-bg border border-card-border py-3 rounded-xl hover:bg-slate-200 dark:hover:bg-white/10 transition-all text-sm font-semibold text-text-primary cursor-pointer w-full">
                 <svg
                   className="w-5 h-5"
                   viewBox="0 0 24 24"
@@ -216,20 +219,10 @@ export function LoginModal({
                 </svg>
                 Google
               </button>
-              <button className="flex items-center justify-center gap-3 bg-card-bg border border-card-border py-3 rounded-xl hover:bg-slate-200 dark:hover:bg-white/10 transition-all text-sm font-semibold text-text-primary cursor-pointer">
-                <svg
-                  className="w-5 h-5 text-text-primary"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M17.05 20.28c-.98.95-2.05 1.79-3.32 1.79-1.25 0-1.66-.78-3.14-.78-1.47 0-1.93.76-3.14.76-1.28 0-2.33-.84-3.31-1.78-2-1.89-3.53-5.32-3.53-8.5 0-5.15 3.34-7.88 6.51-7.88 1.66 0 3.03.62 3.99.62.95 0 2.51-.76 4.41-.56 1.83.18 3.23.95 4.09 2.17-3.79 2.21-3.18 7.23.63 8.8-.76 1.95-1.73 3.86-3.23 5.3zm-3.11-17.72c.86-1.04 1.44-2.48 1.44-3.92-1.24.05-2.73.83-3.63 1.87-.81.93-1.51 2.42-1.51 3.83 1.39.11 2.8-.73 3.7-1.78z" />
-                </svg>
-                Apple
-              </button>
             </div>
           </div>
 
-          <div className="mt-10 text-center">
+          <div className="mt-6 sm:mt-10 text-center">
             <p className="text-sm text-text-muted">
               {t.login.noAccount}{" "}
               <a

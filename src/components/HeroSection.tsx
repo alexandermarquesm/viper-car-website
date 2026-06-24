@@ -198,7 +198,9 @@ export function HeroSection({ onSignUp }: { onSignUp: () => void }) {
                     >
                       <img
                         src={`https://api.dicebear.com/7.x/notionists/svg?seed=${i}&backgroundColor=1e293b`}
-                        alt="User"
+                        alt="User Avatar"
+                        width={32}
+                        height={32}
                       />
                     </div>
                   ))}
@@ -232,7 +234,7 @@ export function HeroSection({ onSignUp }: { onSignUp: () => void }) {
                   <AnimatePresence mode="popLayout">
                     <motion.div
                       key={"action-" + activeService.plate}
-                      className="absolute -right-20 sm:-right-28 top-[16%] bg-white border border-slate-200/50 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] p-3.5 rounded-2xl flex items-center gap-3 z-50 min-w-[200px]"
+                      className="hidden lg:flex absolute -right-20 sm:-right-28 top-[16%] bg-white border border-slate-200/50 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] p-3.5 rounded-2xl items-center gap-3 z-50 min-w-[200px]"
                       initial={{ opacity: 0, y: 30, x: 20, scale: 0.8 }}
                       animate={{ opacity: 1, y: 0, x: 0, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8, y: -20, x: 10 }}
@@ -261,7 +263,7 @@ export function HeroSection({ onSignUp }: { onSignUp: () => void }) {
                   <AnimatePresence mode="popLayout">
                     <motion.div
                       key={"complete-" + activeService.plate}
-                      className="absolute -left-24 sm:-left-32 bottom-[28%] bg-white border border-slate-200/50 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] p-3.5 rounded-2xl flex items-center gap-3.5 z-50 min-w-[200px]"
+                      className="hidden lg:flex absolute -left-24 sm:-left-32 bottom-[28%] bg-white border border-slate-200/50 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] p-3.5 rounded-2xl items-center gap-3.5 z-50 min-w-[200px]"
                       initial={{ opacity: 0, y: 30, x: -20, scale: 0.8 }}
                       animate={{ opacity: 1, y: 0, x: 0, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8, y: -20, x: -10 }}
@@ -361,7 +363,7 @@ function HeroAppAnimation({ currentIndex }: { currentIndex: number }) {
                     transition={{ duration: 1.2, type: "spring", bounce: 0.2 }}
                     className={`bg-white rounded-[1.25rem] p-4 shadow-[0_2px_15px_rgba(0,0,0,0.06)] border relative z-10 flex flex-col gap-4 transition-colors origin-top
                     ${isActive ? "border-blue-300 ring-2 ring-blue-500/10 shadow-lg" : "border-slate-100"} 
-                    ${i > 2 ? "opacity-40 blur-[1px]" : ""}`}
+                    ${i > 2 ? "opacity-40 lg:blur-[1px]" : ""}`}
                     style={{ zIndex: 10 - i }}
                   >
                     {/* Top Row: Car, Plate, Order */}
@@ -422,6 +424,7 @@ function HeroAppAnimation({ currentIndex }: { currentIndex: number }) {
                         </span>
                         <button
                           className={`w-10 h-10 aspect-square flex-shrink-0 ${isActive ? "bg-[#22c55e] hover:bg-[#16a34a] shadow-[0_4px_12px_rgba(34,197,94,0.35)]" : "bg-slate-200 hover:bg-slate-300"} rounded-full flex items-center justify-center text-white transition-transform hover:scale-105 active:scale-95`}
+                          aria-label="Concluir serviço"
                         >
                           <Check
                             size={20}

@@ -16,8 +16,8 @@ import { BenefitsSection } from "./components/BenefitsSection";
 import { PricingSection } from "./components/PricingSection";
 import { BottomCTA } from "./components/BottomCTA";
 import { Footer } from "./components/Footer";
-import { LoginModal } from "./components/LoginModal";
-import { ProfileModal } from "./components/ProfileModal";
+const LoginModal = React.lazy(() => import("./components/LoginModal").then(m => ({ default: m.LoginModal })));
+const ProfileModal = React.lazy(() => import("./components/ProfileModal").then(m => ({ default: m.ProfileModal })));
 
 const LANGUAGES = [
   { code: "pt" as const, label: "Português", flag: "🇧🇷" },
@@ -33,6 +33,7 @@ export default function App() {
   const [user, setUser] = useState<any>(null);
   const { language, setLanguage, t } = useLanguage();
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const [isMobileLangOpen, setIsMobileLangOpen] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -78,6 +79,18 @@ export default function App() {
       }
     }
   }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
 
   const logout = () => {
     localStorage.removeItem("vipercar_token");
@@ -176,13 +189,19 @@ export default function App() {
       <div className="fixed bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-glow-cyan rounded-full blur-[120px] pointer-events-none z-0 animate-glow-3"></div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 bg-nav-bg backdrop-blur-md z-50 border-b border-nav-border transition-colors duration-300">
+      <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-colors duration-300 ${
+        isMenuOpen
+          ? "bg-bg border-nav-border"
+          : "bg-nav-bg backdrop-blur-md border-nav-border"
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <img
                 src="/full_logo.png"
                 alt="Viper Car Logo"
+                width={140}
+                height={36}
                 className="h-8 sm:h-9 w-auto object-contain dark:invert-0 invert"
               />
             </div>
@@ -212,6 +231,7 @@ export default function App() {
                 onClick={toggleTheme}
                 className="p-2 rounded-full bg-card-bg hover:bg-slate-200 dark:hover:bg-white/10 text-text-secondary hover:text-text-primary transition-all border border-card-border cursor-pointer flex items-center justify-center shrink-0"
                 title={theme === "dark" ? "Ativar Modo Claro" : "Ativar Modo Escuro"}
+                aria-label={theme === "dark" ? "Ativar Modo Claro" : "Ativar Modo Escuro"}
               >
                 {theme === "dark" ? (
                   <Sun size={18} className="text-amber-400" />
@@ -286,6 +306,7 @@ export default function App() {
                     onClick={logout}
                     className="p-2 text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
                     title={t.profile.btnLogout}
+                    aria-label={t.profile.btnLogout}
                   >
                     <LogOut size={18} />
                   </button>
@@ -310,7 +331,11 @@ export default function App() {
 
             <button
               className="md:hidden text-text-secondary hover:text-text-primary cursor-pointer animate-none"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => {
+                setIsMenuOpen(!isMenuOpen);
+                setIsMobileLangOpen(false);
+              }}
+              aria-label={isMenuOpen ? "Fechar menu de navegação" : "Abrir menu de navegação"}
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -321,12 +346,13 @@ export default function App() {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="md:hidden bg-bg/95 backdrop-blur-xl border-b border-nav-border overflow-hidden transition-colors duration-300"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="fixed inset-x-0 bottom-0 top-16 md:hidden bg-bg border-b border-nav-border overflow-y-auto no-scrollbar transition-colors duration-300 z-40"
             >
-              <div className="px-4 py-6 flex flex-col gap-4">
+              <div className="px-4 pt-4 pb-12 flex flex-col gap-4">
                 <a
                   href="#features"
                   className="text-base font-semibold text-text-primary px-4 py-2 rounded-lg hover:bg-card-bg"
@@ -374,23 +400,47 @@ export default function App() {
                 {/* Mobile Language Switcher */}
                 <div className="flex flex-col gap-1 px-4 py-2">
                   <span className="text-sm font-semibold text-text-secondary mb-1">{t.nav.lang}</span>
-                  <div className="flex flex-col gap-1">
-                    {LANGUAGES.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => { setLanguage(lang.code); setIsMenuOpen(false); }}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all cursor-pointer text-sm ${
-                          language === lang.code
-                            ? "bg-cyan-500/10 border border-cyan-500/30 text-cyan-400"
-                            : "bg-card-bg border border-card-border text-text-secondary hover:text-text-primary"
-                        }`}
+                  <button
+                    type="button"
+                    onClick={() => setIsMobileLangOpen(!isMobileLangOpen)}
+                    className="flex items-center justify-between w-full px-4 py-2.5 bg-card-bg border border-card-border rounded-xl font-semibold text-sm text-text-primary cursor-pointer transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl">{LANGUAGES.find((l) => l.code === language)?.flag}</span>
+                      <span>{LANGUAGES.find((l) => l.code === language)?.label}</span>
+                    </div>
+                    <Globe size={16} className={`text-text-muted transition-transform duration-300 ${isMobileLangOpen ? "rotate-180" : ""}`} />
+                  </button>
+
+                  <AnimatePresence>
+                    {isMobileLangOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden flex flex-col gap-1 mt-1 pl-2 border-l border-card-border"
                       >
-                        <span className="text-xl">{lang.flag}</span>
-                        <span className="flex-1 text-left">{lang.label}</span>
-                        {language === lang.code && <Check size={16} className="text-cyan-400" />}
-                      </button>
-                    ))}
-                  </div>
+                        {LANGUAGES.map((lang) => (
+                          <button
+                            key={lang.code}
+                            onClick={() => {
+                              setLanguage(lang.code);
+                              setIsMobileLangOpen(false);
+                            }}
+                            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold transition-all cursor-pointer text-sm ${
+                              language === lang.code
+                                ? "bg-cyan-500/10 text-cyan-400"
+                                : "text-text-secondary hover:text-text-primary"
+                            }`}
+                          >
+                            <span className="text-lg">{lang.flag}</span>
+                            <span className="flex-1 text-left">{lang.label}</span>
+                            {language === lang.code && <Check size={14} className="text-cyan-400" />}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
                 <div className="h-px bg-card-border my-2"></div>
 
@@ -468,29 +518,31 @@ export default function App() {
 
       <Footer />
 
-      <AnimatePresence>
-        {isLoginOpen && (
-          <LoginModal
-            onClose={() => setIsLoginOpen(false)}
-            onLoginSuccess={(userData) => {
-              setUser(userData);
-              setIsLoginOpen(false);
-            }}
-          />
-        )}
-        {isProfileOpen && user && (
-          <ProfileModal
-            user={user}
-            onClose={() => setIsProfileOpen(false)}
-            onLogout={() => {
-              logout();
-              setIsProfileOpen(false);
-            }}
-            onManageSubscription={handleManageSubscription}
-            onSubscribe={handleSubscribe}
-          />
-        )}
-      </AnimatePresence>
+      <React.Suspense fallback={null}>
+        <AnimatePresence>
+          {isLoginOpen && (
+            <LoginModal
+              onClose={() => setIsLoginOpen(false)}
+              onLoginSuccess={(userData) => {
+                setUser(userData);
+                setIsLoginOpen(false);
+              }}
+            />
+          )}
+          {isProfileOpen && user && (
+            <ProfileModal
+              user={user}
+              onClose={() => setIsProfileOpen(false)}
+              onLogout={() => {
+                logout();
+                setIsProfileOpen(false);
+              }}
+              onManageSubscription={handleManageSubscription}
+              onSubscribe={handleSubscribe}
+            />
+          )}
+        </AnimatePresence>
+      </React.Suspense>
     </div>
   );
 }

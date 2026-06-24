@@ -14,6 +14,8 @@ export function Footer() {
               <img
                 src="/full_logo.png"
                 alt="Viper Car Logo"
+                width={155}
+                height={40}
                 className="h-10 w-auto object-contain dark:invert-0 invert"
               />
             </div>
@@ -24,24 +26,28 @@ export function Footer() {
               <a
                 href="#"
                 className="w-10 h-10 rounded-full bg-card-bg flex items-center justify-center text-text-secondary border border-card-border hover:bg-cyan-500 hover:text-white transition-all cursor-pointer"
+                aria-label="Instagram"
               >
                 <Instagram size={18} />
               </a>
               <a
                 href="#"
                 className="w-10 h-10 rounded-full bg-card-bg flex items-center justify-center text-text-secondary border border-card-border hover:bg-cyan-500 hover:text-white transition-all cursor-pointer"
+                aria-label="Facebook"
               >
                 <Facebook size={18} />
               </a>
               <a
                 href="#"
                 className="w-10 h-10 rounded-full bg-card-bg flex items-center justify-center text-text-secondary border border-card-border hover:bg-cyan-500 hover:text-white transition-all cursor-pointer"
+                aria-label="LinkedIn"
               >
                 <Linkedin size={18} />
               </a>
               <a
                 href="#"
                 className="w-10 h-10 rounded-full bg-card-bg flex items-center justify-center text-text-secondary border border-card-border hover:bg-cyan-500 hover:text-white transition-all cursor-pointer"
+                aria-label="Twitter"
               >
                 <Twitter size={18} />
               </a>
@@ -49,9 +55,9 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-text-primary font-bold mb-6 uppercase text-[11px] tracking-[0.2em]">
+            <h3 className="text-text-primary font-bold mb-6 uppercase text-[11px] tracking-[0.2em]">
               {t.footer.catProduct}
-            </h4>
+            </h3>
             <ul className="space-y-4 text-sm font-medium">
               <li>
                 <a href="#" className="hover:text-cyan-400 transition-colors">
@@ -88,9 +94,9 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-text-primary font-bold mb-6 uppercase text-[11px] tracking-[0.2em]">
+            <h3 className="text-text-primary font-bold mb-6 uppercase text-[11px] tracking-[0.2em]">
               {t.footer.catSolutions}
-            </h4>
+            </h3>
             <ul className="space-y-4 text-sm font-medium">
               <li>
                 <a href="#" className="hover:text-cyan-400 transition-colors">
@@ -116,9 +122,9 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-text-primary font-bold mb-6 uppercase text-[11px] tracking-[0.2em]">
+            <h3 className="text-text-primary font-bold mb-6 uppercase text-[11px] tracking-[0.2em]">
               {t.footer.catResources}
-            </h4>
+            </h3>
             <ul className="space-y-4 text-sm font-medium">
               <li>
                 <a href="#" className="hover:text-cyan-400 transition-colors">
