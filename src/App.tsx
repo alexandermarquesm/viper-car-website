@@ -29,6 +29,7 @@ export default function App() {
   const { scrollYProgress } = useScroll();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [loginModalMode, setLoginModalMode] = useState<"login" | "register">("login");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const { language, setLanguage, t } = useLanguage();
@@ -102,6 +103,7 @@ export default function App() {
     if (user) {
       window.open("https://viper-car-app.vercel.app", "_blank");
     } else {
+      setLoginModalMode("register");
       setIsLoginOpen(true);
     }
   };
@@ -111,6 +113,7 @@ export default function App() {
 
   const handleSubscribe = async (plan: "basic" | "pro") => {
     if (!user) {
+      setLoginModalMode("login");
       setIsLoginOpen(true);
       return;
     }
@@ -314,13 +317,19 @@ export default function App() {
               ) : (
                 <div className="flex items-center gap-4 shrink-0">
                   <button
-                    onClick={() => setIsLoginOpen(true)}
+                    onClick={() => {
+                      setLoginModalMode("login");
+                      setIsLoginOpen(true);
+                    }}
                     className="px-6 py-2.5 bg-card-bg/60 backdrop-blur-md border border-card-border rounded-full hover:bg-card-bg transition-all text-sm font-medium text-text-primary shadow-xl cursor-pointer"
                   >
                     {t.nav.login}
                   </button>
                   <button
-                    onClick={() => setIsLoginOpen(true)}
+                    onClick={() => {
+                      setLoginModalMode("register");
+                      setIsLoginOpen(true);
+                    }}
                     className="bg-cyan-500 hover:bg-cyan-400 text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-cyan-500/30 text-center cursor-pointer"
                   >
                     {t.nav.signUp}
@@ -477,10 +486,11 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="flex flex-col gap-4">
-                    <button
+                     <button
                       onClick={() => {
-                        setIsMenuOpen(false);
+                        setLoginModalMode("login");
                         setIsLoginOpen(true);
+                        setIsMenuOpen(false);
                       }}
                       className="w-full text-center py-3 bg-card-bg border border-card-border rounded-xl font-bold text-text-primary cursor-pointer"
                     >
@@ -488,6 +498,7 @@ export default function App() {
                     </button>
                     <button
                       onClick={() => {
+                        setLoginModalMode("register");
                         setIsLoginOpen(true);
                         setIsMenuOpen(false);
                       }}
@@ -522,6 +533,7 @@ export default function App() {
         <AnimatePresence>
           {isLoginOpen && (
             <LoginModal
+              initialMode={loginModalMode}
               onClose={() => setIsLoginOpen(false)}
               onLoginSuccess={(userData) => {
                 setUser(userData);
