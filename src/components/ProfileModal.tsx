@@ -59,6 +59,18 @@ export function ProfileModal({
     ? user.tenant?.trialEndsAt
     : user.tenant?.currentPeriodEnd;
 
+  const isExpired = (() => {
+    if (tenantPlan === "monthly") {
+      return user.tenant?.subscriptionStatus !== "active";
+    }
+    if (tenantPlan === "trial") {
+      return user.tenant?.trialEndsAt
+        ? new Date(user.tenant.trialEndsAt) < new Date()
+        : true;
+    }
+    return true;
+  })();
+
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "N/A";
     const date = new Date(dateStr);
@@ -224,9 +236,15 @@ export function ProfileModal({
                         <span className="text-lg font-bold text-text-primary tracking-tight">
                           {planName}
                         </span>
-                        <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                          {t.profile.statusActive}
-                        </span>
+                        {isExpired ? (
+                          <span className="bg-rose-500/10 border border-rose-500/20 text-rose-400 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                            {t.profile.statusExpired}
+                          </span>
+                        ) : (
+                          <span className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                            {t.profile.statusActive}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="bg-card-bg p-2 rounded-xl border border-card-border">
@@ -244,7 +262,16 @@ export function ProfileModal({
                         </strong>
                       </span>
                     </div>
-                    {isTrial ? (
+                    {isExpired ? (
+                      <div className="flex items-center gap-3 text-sm">
+                        <CheckCircle2 size={16} className="text-rose-500" />
+                        <span className="text-text-secondary">
+                          {isTrial
+                            ? t.profile.statusTrialExpired
+                            : t.profile.statusSubscriptionExpired}
+                        </span>
+                      </div>
+                    ) : isTrial ? (
                       <div className="flex items-center gap-3 text-sm">
                         <CheckCircle2 size={16} className="text-text-muted" />
                         <span className="text-text-secondary">
@@ -255,7 +282,7 @@ export function ProfileModal({
                       <div className="flex items-center gap-3 text-sm">
                         <CheckCircle2 size={16} className="text-amber-400" />
                         <span className="text-text-secondary">
-                          {t.profile.statusCourtesy}
+                          {t.profile.planCourtesy}
                         </span>
                       </div>
                     ) : (
