@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import {
   X,
@@ -28,6 +28,56 @@ export function ProfileModal({
 }) {
   const { t, language } = useLanguage();
   const [showPlans, setShowPlans] = useState(false);
+  const [basicPrice, setBasicPrice] = useState(() => {
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem(`vipercar_price_basic_${language}`);
+      if (cached) return cached;
+    }
+    return language === "pt" ? "R$ 49,90" : "$ 9.90";
+  });
+  const [proPrice, setProPrice] = useState(() => {
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem(`vipercar_price_pro_${language}`);
+      if (cached) return cached;
+    }
+    return language === "pt" ? "R$ 89,90" : "$ 19.90";
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const cachedBasic = localStorage.getItem(`vipercar_price_basic_${language}`);
+      const cachedPro = localStorage.getItem(`vipercar_price_pro_${language}`);
+      if (cachedBasic) setBasicPrice(cachedBasic);
+      if (cachedPro) setProPrice(cachedPro);
+    }
+
+    const apiUrl = import.meta.env.VITE_API_URL || "https://viper-car-api.vercel.app";
+    fetch(`${apiUrl}/status/plans`)
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data) => {
+        const isBRL = language === "pt";
+        if (data.basic) {
+          const val = isBRL ? `R$ ${data.basic}` : `$ ${data.basic}`;
+          setBasicPrice(val);
+          if (typeof window !== "undefined") {
+            localStorage.setItem(`vipercar_price_basic_${language}`, val);
+          }
+        }
+        if (data.pro) {
+          const val = isBRL ? `R$ ${data.pro}` : `$ ${data.pro}`;
+          setProPrice(val);
+          if (typeof window !== "undefined") {
+            localStorage.setItem(`vipercar_price_pro_${language}`, val);
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch dynamic prices in ProfileModal:", err);
+      });
+  }, [language]);
   const tenantPlan = user.tenant?.plan;
   const tenantVariant = user.tenant?.variantId;
 
@@ -154,7 +204,7 @@ export function ProfileModal({
                   </div>
                   <div className="text-right">
                     <span className="text-lg font-black text-cyan-400 block">
-                      R$ 49,90
+                      {basicPrice}
                     </span>
                     <span className="text-[10px] text-text-muted">{t.pricing.basicPriceSub}</span>
                   </div>
@@ -182,7 +232,7 @@ export function ProfileModal({
                   </div>
                   <div className="text-right">
                     <span className="text-lg font-black text-indigo-400 block">
-                      R$ 89,90
+                      {proPrice}
                     </span>
                     <span className="text-[10px] text-indigo-200/60">{t.pricing.proPriceSub}</span>
                   </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Check } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -12,8 +12,58 @@ export function PricingSection({
   onSubscribe: (plan: "basic" | "pro") => void;
   onManageSubscription: () => void;
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const tenantPlan = user?.tenant?.plan;
+  const [basicPrice, setBasicPrice] = useState(() => {
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem(`vipercar_price_basic_${language}`);
+      if (cached) return cached;
+    }
+    return t.pricing.basicPrice;
+  });
+  const [proPrice, setProPrice] = useState(() => {
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem(`vipercar_price_pro_${language}`);
+      if (cached) return cached;
+    }
+    return t.pricing.proPrice;
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const cachedBasic = localStorage.getItem(`vipercar_price_basic_${language}`);
+      const cachedPro = localStorage.getItem(`vipercar_price_pro_${language}`);
+      if (cachedBasic) setBasicPrice(cachedBasic);
+      if (cachedPro) setProPrice(cachedPro);
+    }
+
+    const apiUrl = import.meta.env.VITE_API_URL || "https://viper-car-api.vercel.app";
+    fetch(`${apiUrl}/status/plans`)
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data) => {
+        const isBRL = language === "pt";
+        if (data.basic) {
+          const val = isBRL ? `R$ ${data.basic}` : `$ ${data.basic}`;
+          setBasicPrice(val);
+          if (typeof window !== "undefined") {
+            localStorage.setItem(`vipercar_price_basic_${language}`, val);
+          }
+        }
+        if (data.pro) {
+          const val = isBRL ? `R$ ${data.pro}` : `$ ${data.pro}`;
+          setProPrice(val);
+          if (typeof window !== "undefined") {
+            localStorage.setItem(`vipercar_price_pro_${language}`, val);
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch dynamic prices in PricingSection:", err);
+      });
+  }, [language, t.pricing.basicPrice, t.pricing.proPrice]);
   const tenantVariant = user?.tenant?.variantId;
   const hasActiveSub =
     tenantPlan === "monthly" && user?.tenant?.subscriptionStatus === "active";
@@ -135,7 +185,7 @@ export function PricingSection({
               boxShadow: "0 20px 40px -15px rgba(6, 182, 212, 0.15)",
             }}
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
-            className="bg-card-bg border border-card-border rounded-3xl p-10 flex flex-col transition-all relative overflow-hidden group cursor-pointer"
+            className="bg-card-bg border border-card-border rounded-3xl p-10 flex flex-col relative overflow-hidden group cursor-pointer"
           >
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-cyan-500/20 transition-all duration-500" />
             <div className="relative z-10 flex flex-col h-full">
@@ -145,7 +195,7 @@ export function PricingSection({
               </p>
               <div className="mb-8">
                 <span className="text-5xl font-black text-text-primary tracking-tight">
-                  {t.pricing.basicPrice}
+                  {basicPrice}
                 </span>
                 <span className="text-text-muted font-medium">{t.pricing.basicPriceSub}</span>
               </div>
@@ -222,7 +272,7 @@ export function PricingSection({
               </p>
               <div className="mb-8">
                 <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400 tracking-tight">
-                  {t.pricing.proPrice}
+                  {proPrice}
                 </span>
                 <span className="text-slate-400 font-medium">{t.pricing.proPriceSub}</span>
               </div>
