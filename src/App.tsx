@@ -120,13 +120,14 @@ export default function App() {
 
     try {
       const token = localStorage.getItem("vipercar_token");
+      const currency = language === "pt" ? "BRL" : language === "es" ? "EUR" : "USD";
       const response = await fetch(`${apiUrl}/subscriptions/checkout`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan, currency }),
       });
 
       const data = await response.json();

@@ -37,23 +37,25 @@ export function PricingSection({
       if (cachedPro) setProPrice(cachedPro);
     }
 
+    const currencyQuery = language === "pt" ? "brl" : language === "es" ? "eur" : "usd";
+    const symbol = currencyQuery === "brl" ? "R$ " : currencyQuery === "eur" ? "€ " : "$ ";
+
     const apiUrl = import.meta.env.VITE_API_URL || "https://viper-car-api.vercel.app";
-    fetch(`${apiUrl}/status/plans`)
+    fetch(`${apiUrl}/status/plans?currency=${currencyQuery}`)
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
       })
       .then((data) => {
-        const isBRL = language === "pt";
         if (data.basic) {
-          const val = isBRL ? `R$ ${data.basic}` : `$ ${data.basic}`;
+          const val = `${symbol}${data.basic}`;
           setBasicPrice(val);
           if (typeof window !== "undefined") {
             localStorage.setItem(`vipercar_price_basic_${language}`, val);
           }
         }
         if (data.pro) {
-          const val = isBRL ? `R$ ${data.pro}` : `$ ${data.pro}`;
+          const val = `${symbol}${data.pro}`;
           setProPrice(val);
           if (typeof window !== "undefined") {
             localStorage.setItem(`vipercar_price_pro_${language}`, val);
