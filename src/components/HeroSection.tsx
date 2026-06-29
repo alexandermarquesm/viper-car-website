@@ -162,7 +162,7 @@ export function HeroSection({ onSignUp }: { onSignUp: () => void }) {
                   {t.hero.cta} <ArrowRight size={18} />
                 </button>
                 <a
-                  href="https://github.com/alexandermarquesm/vip-car-website/releases/download/v2.0.6/viper-car-2.0.6.apk"
+                  href="https://github.com/alexandermarquesm/vip-car-website/releases/download/v2.1.0/viper-car-2.1.0.apk"
                   download
                   className="w-full sm:w-auto bg-card-bg hover:bg-slate-200 dark:hover:bg-slate-900 border border-card-border hover:border-cyan-500/50 text-text-primary px-8 py-2.5 rounded-full text-base font-medium flex items-center justify-center gap-3 transition-all duration-300 shadow-lg hover:shadow-cyan-500/10 group cursor-pointer active:scale-95"
                 >
@@ -177,7 +177,7 @@ export function HeroSection({ onSignUp }: { onSignUp: () => void }) {
                     <span className="text-sm font-bold flex items-center gap-1.5">
                       {t.hero.download}{" "}
                       <span className="text-[10px] font-normal text-text-muted bg-card-bg border border-card-border px-1.5 py-0.5 rounded group-hover:bg-cyan-500/20 group-hover:text-cyan-300 transition-colors">
-                        v2.0.6
+                        v2.1.0
                       </span>
                     </span>
                   </div>
